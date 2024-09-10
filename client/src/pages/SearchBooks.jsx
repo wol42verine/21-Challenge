@@ -9,8 +9,9 @@ import {
 } from 'react-bootstrap';
 
 import Auth from '../utils/auth';
-import { saveBook, searchGoogleBooks } from '../utils/API';
+import { saveBook, searchBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+import { searchGoogleBooks } from '../utils/API'; 
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -30,32 +31,36 @@ const SearchBooks = () => {
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (!searchInput) {
+      console.log('Search input is empty');
       return false;
     }
-
+  
     try {
+      console.log('Searching for books with query:', searchInput);
       const response = await searchGoogleBooks(searchInput);
-
+  
       if (!response.ok) {
         throw new Error('something went wrong!');
       }
-
+  
       const { items } = await response.json();
-
+      console.log('Books found:', items);
+  
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
+        link: book.volumeInfo.infoLink,
       }));
-
+  
       setSearchedBooks(bookData);
       setSearchInput('');
     } catch (err) {
-      console.error(err);
+      console.error('Error occurred while searching for books:', err);
     }
   };
 

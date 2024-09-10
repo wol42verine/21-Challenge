@@ -1,6 +1,7 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User } = require('../models');
 const { signToken } = require('../utils/auth');
+const axios = require('axios');
 
 const resolvers = {
   Query: {
@@ -9,6 +10,22 @@ const resolvers = {
         return User.findOne({ _id: context.user._id });
       }
       throw new AuthenticationError('You need to be logged in!');
+    },
+    searchBooks: async (parent, { query }) => {
+      try {
+        const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+        return response.data.items.map((item) => ({
+          bookId: item.id,
+          authors: item.volumeInfo.authors,
+          description: item.volumeInfo.description,
+          title: item.volumeInfo.title,
+          image: item.volumeInfo.imageLinks?.thumbnail,
+          link: item.volumeInfo.infoLink,
+        }));
+      } catch (error) {
+        console.error(error);
+        throw new Error('Error fetching books from Google Books API');
+      }
     },
   },
   Mutation: {

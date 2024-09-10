@@ -3,11 +3,20 @@ import client from './apolloClient'; // Ensure you have an Apollo Client instanc
 
 // GraphQL Queries and Mutations
 const GET_ME = gql`
-  query getMe {
+  query me {
     me {
       _id
       username
       email
+      bookCount
+      savedBooks {
+        bookId
+        authors
+        description
+        title
+        image
+        link
+      }
     }
   }
 `;
@@ -37,22 +46,7 @@ const LOGIN_USER = gql`
     }
   }
 `;
-const SEARCH_GOOGLE_BOOKS = gql`
-  query searchGoogleBooks($query: String!) {
-    searchGoogleBooks(query: $query) {
-      id
-      volumeInfo {
-        title
-        authors
-        description
-        imageLinks {
-          thumbnail
-        }
-        infoLink
-      }
-    }
-  }
-`;
+
 const SAVE_BOOK = gql`
   mutation saveBook($bookData: BookInput!) {
     saveBook(bookData: $bookData) {
@@ -116,10 +110,19 @@ export const loginUser = async (userData) => {
 };
 
 export const searchGoogleBooks = async (query) => {
-  return client.query({
-    query: SEARCH_GOOGLE_BOOKS,
-    variables: { query },
-  });
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+};
+export const searchBooks = async (query) => {
+  try {
+    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+    if (!response.ok) {
+      throw new Error('something went wrong!');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export const saveBook = async (bookData, token) => {
