@@ -47,12 +47,26 @@ const LOGIN_USER = gql`
   }
 `;
 
+const SEARCH_BOOKS = gql`
+  query searchBooks($query: String!) {
+    searchBooks(query: $query) {
+      bookId
+      authors
+      description
+      title
+      image
+      link
+    }
+  }
+`;
+
 const SAVE_BOOK = gql`
   mutation saveBook($bookData: BookInput!) {
     saveBook(bookData: $bookData) {
       _id
       username
       email
+      bookCount
       savedBooks {
         bookId
         authors
@@ -60,6 +74,7 @@ const SAVE_BOOK = gql`
         title
         image
         link
+        __typename: Book
       }
     }
   }
@@ -82,6 +97,19 @@ const DELETE_BOOK = gql`
     }
   }
 `;
+
+// export const SEARCH_BOOKS = gql`
+//   query searchBooks($query: String!) {
+//     searchBooks(query: $query) {
+//       bookId
+//       authors
+//       description
+//       title
+//       image
+//       link
+//     }
+//   }
+// `;
 
 // API Functions
 export const getMe = async (token) => {
@@ -109,23 +137,19 @@ export const loginUser = async (userData) => {
   });
 };
 
-export const searchGoogleBooks = async (query) => {
-  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
-};
+// export const searchGoogleBooks = async (query) => {
+//   return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+// };
+
 export const searchBooks = async (query) => {
-  try {
-    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
-    if (!response.ok) {
-      throw new Error('something went wrong!');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+  return client.query({
+    query: SEARCH_BOOKS,
+    variables: { query },
+  });
 };
 
 export const saveBook = async (bookData, token) => {
+  console.log('Token:', token); // Log token to verify it is present
   return client.mutate({
     mutation: SAVE_BOOK,
     variables: { bookData },
@@ -148,3 +172,5 @@ export const deleteBook = async (bookId, token) => {
     },
   });
 };
+
+export { GET_ME, CREATE_USER, LOGIN_USER, SEARCH_BOOKS, SAVE_BOOK, DELETE_BOOK };

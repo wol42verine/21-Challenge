@@ -1,25 +1,34 @@
 const jwt = require('jsonwebtoken');
 
-const secret = 'yourSecret';
+const secret = 'mysecretsshhhhh';
 const expiration = '2h';
 
 module.exports = {
   authMiddleware: function ({ req }) {
-    let token = req.headers.authorization || '';
+    // allows token to be sent via req.body, req.query, or headers
+    let token = req.body.token || req.query.token || req.headers.authorization;
 
-    if (token) {
+    // ["Bearer", "<tokenvalue>"]
+    if (req.headers.authorization) {
       token = token.split(' ').pop().trim();
-      try {
-        const { data } = jwt.verify(token, secret, { maxAge: expiration });
-        req.user = data;
-      } catch {
-        console.log('Invalid token');
-        throw new AuthenticationError('Invalid token');
-      }
+    }
+
+    if (!token) {
+      console.log('No token provided');
+      return req;
+    }
+
+    try {
+      const { data } = jwt.verify(token, secret, { expiresIn: expiration });
+      req.user = data;
+      // console.log('Token decoded:', data);
+    } catch(err) {
+      console.log('Invalid token', err);
     }
 
     return req;
   },
+  
   signToken: function ({ username, email, _id }) {
     const payload = { username, email, _id };
     return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
