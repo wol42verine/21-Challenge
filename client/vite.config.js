@@ -1,14 +1,14 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'client/dist', // Directory where Vite will output the built files
+    outDir: 'client/dist',
     rollupOptions: {
-      external: ['@apollo/client/Link/context'], // Externalize @apollo/client
-    },
+      external: ['@apollo/client/Link/context'] // Treat Apollo Client as external
+    }
   },
   server: {
     port: 3000,
@@ -17,8 +17,8 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         secure: false,
-        changeOrigin: true,
-      },
-    },
-  },
-});
+        changeOrigin: true
+      }
+    }
+  }
+})
