@@ -14,5 +14,10 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    rollupOptions: {
+      external: ['@apollo/client']  // Add this line to treat @apollo/client as external
+    }
   }
 })
