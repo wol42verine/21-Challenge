@@ -3,7 +3,7 @@ services:
     name: googlebooks-app
     env: node
     plan: free
-    buildCommand: npm run build
+    buildCommand: cd client && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
