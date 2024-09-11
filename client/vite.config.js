@@ -3,11 +3,12 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: 'client', // Set the root to the client directory
+  root: '.', // Set the root to the current directory
   plugins: [react()],
   build: {
-    outDir: 'dist', // Output directory relative to the root
+    outDir: 'client/dist', // Output directory relative to the root
     rollupOptions: {
+      input: 'client/index.html', // Entry point for the build
       external: ['@apollo/client/Link/context'] // Treat Apollo Client as external
     }
   },
