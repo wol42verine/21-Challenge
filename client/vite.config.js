@@ -5,7 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'client/dist',  // Ensure this is correct
+    outDir: 'client/dist',
+    rollupOptions: {
+      external: ['@apollo/client/Link/context'] // Treat Apollo Client as external
+    }
   },
   server: {
     port: 3000,
@@ -16,11 +19,6 @@ export default defineConfig({
         secure: false,
         changeOrigin: true
       }
-    }
-  },
-  build: {
-    rollupOptions: {
-      external: ['@apollo/client/Link/context']  // Add this line to treat @apollo/client as external
     }
   }
 })
