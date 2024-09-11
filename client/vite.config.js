@@ -17,7 +17,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: ['@apollo/client']  // Add this line to treat @apollo/client as external
+      external: ['@apollo/client/Link/context']  // Add this line to treat @apollo/client as external
     }
   }
 })
