@@ -10,7 +10,7 @@ router.use('/users', userRoutes);
 
 // serve up react front-end in production
 router.use((req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/build/index.html'));
+    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
   });
   
 module.exports = router;
